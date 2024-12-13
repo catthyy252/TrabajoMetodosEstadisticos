@@ -1,0 +1,476 @@
+---
+title: "Estudio del Consumo de Alcohol, Tabaco y Sustancias Psicoactivas"
+output:
+  html_document:
+    df_print: paged
+date: "2024-12-05"
+warning: false
+---
+
+```{r setup, include=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+suppressWarnings(library(tidyr))
+suppressWarnings(library(ggplot2))
+```
+
+1. Problema a tratar.
+
+	El consumo temprano de sustancias perjudiciales como el alcohol, el tabaco y las drogas en jóvenes representa un serio problema de salud pública a nivel mundial. La juventud es una etapa crucial en el desarrollo físico, emocional y psicológico de una persona. Durante estos años, el cerebro continúa su proceso de maduración, y las decisiones que se toman en este periodo pueden tener un impacto muy grande a lo largo de la vida. Desafortunadamente, el uso de estas sustancias a edades tempranas pueden generar consecuencias a largo plazo que afectan a la salud y al futuro de los jóvenes.
+
+	Uno de los principales peligros asociados con el consumo temprano de alcohol y tabaco es que los jóvenes a menudo no son plenamente conscientes de los daños que pueden causar a su organismo. El consumo de alcohol, por ejemplo, puede interferir en el desarrollo cerebral, afectando a la memoria, la toma de decisiones y el control de los impulsos.
+
+	Por otro lado, el tabaco, que a menudo se introduce como una solución errónea para manejar el estrés, tiene efectos devastadores a largo plazo. Fumar cigarrillos está asociado con una amplia variedad de enfermedades respiratorias, cánceres y problemas cardiovasculares. Frecuentemente, los jóvenes que comienzan a fumar a una edad temprana desarrollan una dependencia tanto física como psicológica hacia la nicotina, lo que les dificulta dejar este hábito a lo largo de su vida.
+
+	Además de las sustancias legales como el alcohol y el tabaco, el uso de drogas ilegales representa una amenaza aún más grave. Drogas como las representadas en las tablas de datos a estudiar, perjudican profundamente al cerebro, distorsionando la percepción de la realidad y la capacidad de tomar decisiones. Los jóvenes que consumen estas sustancias tienen mas posibilidades de padecer trastornos psicológicos como la depresión y la ansiedad.
+
+	En el ámbito académico, el consumo de estas sustancias también impacta el rendimiento de los jóvenes, interfiere en sus relaciones familiares y sociales, y puede llevar a la exclusión de entornos educativos y laborales. Esto ocurre, en muchos casos, porque los jóvenes no reciben la información adecuada sobre los riesgos asociados con el consumo de alcohol, tabaco y drogas. A menudo, la presión social o la desinformación llevan a las personas a consumir estas sustancias sin tener un conocimiento claro de las consecuencias a las que se pueden enfrentar.
+
+2. Objetivos.
+
+	Este estudio tiene como finalidad analizar el consumo de sustancias nocivas, como el tabaco, las drogas y el alcohol en la población de España, especialmente centrándonos en los jóvenes. A través de este análisis, se busca conocer las medias y frecuencias de consumo de estas sustancias, observando cómo varían según factores demográficos y temporales. Además, se examinará la evolución histórica del consumo de drogas para identificar cambios en los patrones de consumo desde el siglo pasado hasta la actualidad, así como el impacto en la salud, incluyendo las muertes relacionadas con el tabaco y las sobredosis.
+
+	El estudio también abordará el consumo de cannabis, la droga ilegal más popular entre los jóvenes españoles, analizando la percepción de riesgo que tienen los adolescentes sobre su uso. Asimismo, se investigará el consumo de alcohol, destacando la falta de control y el desconocimiento de límites personales entre los jóvenes. Finalmente, se evaluarán los años y porcentajes en los que el consumo de estas sustancias entre los adolescentes han sido mayor o menor.
+
+3. Fuentes de datos utilizados.
+
+	Los datos que hemos utilizado para la realización del estudio han sido extraídos de la siguiente página: https://www.epdata.es/
+
+	En primer lugar, cargamos y leemos todos los dataframes que tenemos para iniciar los estudios.
+```{r}
+evolucion_sustancias <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/evolucion_del_consumo_de_alcohol,_cannabis,_cocaina_en_polvo,_hipnosedantes_y_tabaco_en_españa.csv", header = TRUE, sep = ";", dec = ".", nrows = 13)
+prevalencia_consumo <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/prevalencia_de_consumo_alguna_vez_en_la_vida_segun_tipo_de_droga.csv", header = TRUE, nrows = 14, sep = ";", dec = ".")
+evolucion_tabaco <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/evolucion_el_numero_de_usuarios_de_tabaco_a_nivel_mundial.csv", header = TRUE, sep = ";", dec = ".", nrows = 6)
+fumadores_diarios <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/fumadores_a_diario_en_españa_por_grupos_de_edad_y_sexo.csv", header = TRUE, nrows = 7, sep = ";", dec = ".")
+consecuencias <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/los_cancer_de_laringe_y_pulmon_son_los_que_mas_relacionados_estan_con_el_tabaco.csv", header = TRUE, nrows = 16, sep = ";", dec = ".")
+muertes_por_drogas <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/muertes_por_sobredosis_de_drogas_por_paises_europeos.csv", header = TRUE, nrows = 30, sep = ";", dec = ".")
+fumadores_por_provincias <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/personas_que_fuman_a_diario_por_provincias_en_españa.csv", header = TRUE, nrows = 14, sep = ";", dec = ".")
+prevalencia_alcohol <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/prevalencia_del_consumo_de_alcohol_entre_los_estudiantes_de_enseñanzas_secundarias_de_14-18_años_en_españa.csv", header = TRUE, nrows = 14, sep = ";", dec = ".")
+fallecidos <- read.csv("C:/Users/catth/OneDrive/Documentos/ASIGNATURAS UNIVERSIDAD/SEGUNDO/ME/temas trabajo/tabaco, drogas, alcohol/fallecidos_por_reaccion_aguda_tras_el_consumo_de_sustancias_psicoactivas_en_españa.csv", header = TRUE, nrows = 16, sep = ";", dec = ".")
+```
+
+  Al consultar los dataframes, nos percatamos de que los tipos de variables que venían predispuestos en ellos eran incorrectos, por lo que hemos tenido que realizar algunos cambios como se muestra acontinuación. Han habido varias modificaciones más aparte de las ya incluidas pero solo introducimos estas que se muestran a modo de ejemplo.
+```{r, results='hide'}
+str(evolucion_sustancias)
+
+evolucion_sustancias$Alcohol <- gsub(",", ".", evolucion_sustancias$Alcohol)
+evolucion_sustancias$Tabaco <- gsub(",", ".", evolucion_sustancias$Tabaco)
+evolucion_sustancias$Cannabis <- gsub(",", ".", evolucion_sustancias$Cannabis)
+evolucion_sustancias$Hipnosedantes.con.o.sin.receta <- gsub(",", ".", evolucion_sustancias$Hipnosedantes.con.o.sin.receta)
+evolucion_sustancias$Cocaína.en.polvo <- gsub(",", ".", evolucion_sustancias$Cocaína.en.polvo)
+
+evolucion_sustancias$Alcohol <- as.numeric(evolucion_sustancias$Alcohol)
+evolucion_sustancias$Tabaco <- as.numeric(evolucion_sustancias$Tabaco)
+evolucion_sustancias$Cannabis <- as.numeric(evolucion_sustancias$Cannabis)
+evolucion_sustancias$Hipnosedantes.con.o.sin.receta <- as.numeric(evolucion_sustancias$Hipnosedantes.con.o.sin.receta)
+evolucion_sustancias$Cocaína.en.polvo <- as.numeric(evolucion_sustancias$Cocaína.en.polvo)
+```
+
+```{r, echo=FALSE, results='hide'}
+str(prevalencia_consumo)
+
+prevalencia_consumo$Alcohol <- gsub(",", ".", prevalencia_consumo$Alcohol)
+prevalencia_consumo$Tabaco <- gsub(",", ".", prevalencia_consumo$Tabaco)
+prevalencia_consumo$Cannabis <- gsub(",", ".", prevalencia_consumo$Cannabis)
+prevalencia_consumo$Hipnosedantes.con.o.sin.receta <- gsub(",", ".", prevalencia_consumo$Hipnosedantes.con.o.sin.receta)
+prevalencia_consumo$Cocaína.polvo.y.o.base<- gsub(",", ".", prevalencia_consumo$Cocaína.polvo.y.o.base)
+
+prevalencia_consumo$Hipnosedantes.sin.receta <- gsub(",", ".", prevalencia_consumo$Hipnosedantes.sin.receta)
+prevalencia_consumo$Éxtasis <- gsub(",", ".", prevalencia_consumo$Éxtasis)
+prevalencia_consumo$Alucinógenos <- gsub(",", ".", prevalencia_consumo$Alucinógenos)
+
+prevalencia_consumo$Alcohol <- as.numeric(prevalencia_consumo$Alcohol)
+prevalencia_consumo$Tabaco <- as.numeric(prevalencia_consumo$Tabaco)
+prevalencia_consumo$Cannabis <- as.numeric(prevalencia_consumo$Cannabis)
+prevalencia_consumo$Hipnosedantes.con.o.sin.receta <- as.numeric(prevalencia_consumo$Hipnosedantes.con.o.sin.receta)
+
+prevalencia_consumo$Cocaína.polvo.y.o.base<- as.numeric(prevalencia_consumo$Cocaína.polvo.y.o.base)
+prevalencia_consumo$Hipnosedantes.sin.receta <- as.numeric(prevalencia_consumo$Hipnosedantes.sin.receta)
+prevalencia_consumo$Éxtasis <- as.numeric(prevalencia_consumo$Éxtasis)
+prevalencia_consumo$Alucinógenos <- as.numeric(prevalencia_consumo$Alucinógenos)
+
+str(evolucion_tabaco)
+evolucion_tabaco$X15.24 <- gsub(",", ".", evolucion_tabaco$X15.24)
+evolucion_tabaco$X25.34 <- gsub(",", ".", evolucion_tabaco$X25.34)
+evolucion_tabaco$X35.44 <- gsub(",", ".", evolucion_tabaco$X35.44)
+evolucion_tabaco$X45.54 <- gsub(",", ".", evolucion_tabaco$X45.54)
+evolucion_tabaco$X55.64 <- gsub(",", ".", evolucion_tabaco$X55.64)
+evolucion_tabaco$X65.74 <- gsub(",", ".", evolucion_tabaco$X65.74)
+evolucion_tabaco$X75.84 <- gsub(",", ".", evolucion_tabaco$X75.84)
+evolucion_tabaco$X85.o.más <- gsub(",", ".", evolucion_tabaco$X85.o.más)
+
+evolucion_tabaco$X15.24 <- as.numeric(evolucion_tabaco$X15.24)
+evolucion_tabaco$X25.34 <- as.numeric(evolucion_tabaco$X25.34)
+evolucion_tabaco$X35.44 <- as.numeric(evolucion_tabaco$X35.44)
+evolucion_tabaco$X45.54 <- as.numeric(evolucion_tabaco$X45.54)
+evolucion_tabaco$X55.64 <- as.numeric(evolucion_tabaco$X55.64)
+evolucion_tabaco$X65.74 <- as.numeric(evolucion_tabaco$X65.74)
+evolucion_tabaco$X75.84 <- as.numeric(evolucion_tabaco$X75.84)
+evolucion_tabaco$X85.o.más <- as.numeric(evolucion_tabaco$X85.o.más)
+
+str(fumadores_diarios)
+fumadores_diarios$Hombres = as.integer(gsub("\\.", "",fumadores_diarios$Hombres))
+fumadores_diarios$Mujeres = as.integer(gsub("\\.", "",fumadores_diarios$Mujeres))
+
+str(consecuencias)
+colnames(consecuencias)[colnames(consecuencias) == "X."] <- "%"
+
+str(muertes_por_drogas)
+muertes_por_drogas$Fallecidos = as.integer(gsub("\\.", "",muertes_por_drogas$Fallecidos))
+
+str(fumadores_por_provincias)
+fumadores_por_provincias$Fumadores = as.integer(gsub("\\.", "",fumadores_por_provincias$Fumadores))
+
+str(prevalencia_alcohol)
+prevalencia_alcohol$Alguna.vez.en.la.vida = as.numeric(gsub(",", ".", prevalencia_alcohol$Alguna.vez.en.la.vida))
+prevalencia_alcohol$Últimos.12.meses = as.numeric(gsub(",", ".", prevalencia_alcohol$Últimos.12.meses))
+prevalencia_alcohol$Últimos.30.días = as.numeric(gsub(",", ".", prevalencia_alcohol$Últimos.30.días))
+```
+
+4. Análisis de los datos.
+
+  Del primer dataframe hemos extraído los datos de cada sustancia y estudiamos la media, la varianza y las frecuencias relativas de cada una de ellas. Analizar la media, la varianza y las frecuencias relativas de cada sustancia ayuda a conocer las cantidades de consumo y a evaluarlas.
+
+ • Estudio del alcohol:
+
+```{r}
+media_consumo_alcohol <- mean(evolucion_sustancias$Alcohol, na.rm = TRUE)
+desviacion_consumo_alcohol <- sd(evolucion_sustancias$Alcohol, na.rm = TRUE)
+print(media_consumo_alcohol)
+print(desviacion_consumo_alcohol)
+
+frec_absoluta_alcohol <- table(evolucion_sustancias$Alcohol)
+frec_relativa_alcohol <- prop.table(frec_absoluta_alcohol)
+print(frec_relativa_alcohol)
+```
+
+ • Estudio del tabaco:
+ 
+```{r}
+media_consumo_tabaco <- mean(evolucion_sustancias$Tabaco, na.rm = TRUE)
+desviacion_consumo_tabaco <- sd(evolucion_sustancias$Tabaco, na.rm = TRUE)
+print(media_consumo_tabaco)
+print(desviacion_consumo_tabaco)
+
+frec_absoluta_tabaco <- table(evolucion_sustancias$Tabaco)
+frec_relativa_tabaco <- prop.table(frec_absoluta_tabaco)
+print(frec_relativa_tabaco)
+```
+
+ • Estudio del cannabis:
+ 
+```{r}
+media_consumo_cannabis <- mean(evolucion_sustancias$Cannabis)
+desviacion_consumo_cannabis <- sd(evolucion_sustancias$Cannabis)
+print(media_consumo_cannabis)
+print(desviacion_consumo_cannabis)
+
+frec_absoluta_cannabis <- table(evolucion_sustancias$Cannabis)
+frec_relativa_cannabis <- prop.table(frec_absoluta_cannabis)
+print(frec_relativa_cannabis)
+```
+
+ • Estudio de hipnosedantes con o sin receta:
+ 
+```{r}
+media_consumo_hipnosedantes <- mean(evolucion_sustancias$Hipnosedantes.con.o.sin.receta, na.rm = TRUE)
+desviacion_consumo_hipnosedantes <- sd(evolucion_sustancias$Hipnosedantes.con.o.sin.receta, na.rm = TRUE)
+print(media_consumo_hipnosedantes)
+print(desviacion_consumo_hipnosedantes)
+
+frec_absoluta_hipnosedantes <- table(evolucion_sustancias$Hipnosedantes.con.o.sin.receta)
+frec_relativa_hipnosedantes <- prop.table(frec_absoluta_hipnosedantes)
+print(frec_relativa_hipnosedantes)
+```
+
+ • Estudio de la cocaína en polvo:
+ 
+```{r}
+media_consumo_cocaina <- mean(evolucion_sustancias$Cocaína.en.polvo)
+desviacion_consumo_cocaina <- sd(evolucion_sustancias$Cocaína.en.polvo)
+print(media_consumo_cocaina)
+print(desviacion_consumo_cocaina)
+
+frec_absoluta_cocaina <- table(evolucion_sustancias$Cocaína.en.polvo)
+frec_relativa_cocaina <- prop.table(frec_absoluta_cocaina)
+print(frec_relativa_cocaina)
+```
+
+	A continuación, con todos estos datos obtenidos, realizamos un diagrama de caja para visualizarlos mejor.
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+evolucion_sustancias_datos <- data.frame(
+  Año = c(1997, 1999, 2001, 2003, 2005, 2007, 2009, 2011, 2013, 2015, 2018, 2020, 2022),
+  Alcohol = c(90.6, 87.3, 89.0, 88.6, 93.7, 88.0, 94.2, 90.9, 93.1, 93.5, 91.2, 93.0, 93.2),
+  Tabaco = c(69.7, 64.9, 68.4, 68.9, 69.5, 68.5, 75.0, 71.7, 73.1, 72.5, 69.7, 70.0, 69.6),
+  Cannabis = c(22.9, 19.6, 23.8, 29.0, 28.6, 27.3, 32.1, 27.4, 30.4, 31.5, 35.2, 37.5, 40.9),
+  Hipnosedantes = c(NA, NA, NA, NA, 8.7, 15.4, 13.4, 19.5, 22.2, 18.7, 20.8, 22.5, 23.5),
+  Cocaina = c(3.4, 3.1, 4.8, 5.9, 7.0, 8.0, 10.2, 8.8, 10.2, 8.9, 10.0, 10.9, 11.7)
+)
+
+# convertir los datos a formato largo
+datos_largos <- evolucion_sustancias_datos %>%
+  pivot_longer(cols = -Año, names_to = "Sustancia", values_to = "Consumo")
+
+# diagrama de caja con los datos
+ggplot(datos_largos, aes(x = Sustancia, y = Consumo, fill = Sustancia)) +
+  geom_boxplot(outlier.color = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(
+    title = "Diagrama de Caja del Consumo de Sustancias (1995-2022)",
+    x = "Sustancia",
+    y = "Nivel de Consumo"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_brewer(palette = "Set3")
+```
+
+	Analizamos ahora los efectos de estas sustancias en jóvenes y su tasa de consumo, destacando que el alcohol es consumido por estudiantes de secundaria. Calculamos la media total de jóvenes que lo han llegado a tomar alguna una vez en la vida, en los últimos 12 meses y en los últimos 30 días.
+```{r}
+media_alguna_vez <- mean(prevalencia_alcohol$Alguna.vez.en.la.vida, na.rm = TRUE)
+print(media_alguna_vez)
+media_ultimos_12_meses <- mean(prevalencia_alcohol$Últimos.12.meses, na.rm = TRUE)
+print(media_ultimos_12_meses)
+media_ultimos_30_dias <- mean(prevalencia_alcohol$Últimos.30.días, na.rm = TRUE)
+print(media_ultimos_30_dias)
+```
+
+	Es interesante examinar ambos extremos también, el máximo y el mínimo, para lograr una perspectiva que facilita la evaluación de la gravedad del problema. Primero, analizaremos el porcentaje máximo y mínimo de personas, en este caso, adolescentes que hayan consumido alcohol alguna vez en la vida, ya sea por diferentes factores o causas como celebraciones, reuniones con amigos, la participación en un brindis o muchos otros casos.
+```{r}
+valor_max_alguna_vez <- max(prevalencia_alcohol$Alguna.vez.en.la.vida)
+años_max_alguna_vez <- prevalencia_alcohol$Año[prevalencia_alcohol$Alguna.vez.en.la.vida == valor_max_alguna_vez]
+cat("El porcentaje máximo de adolescentes que han consumido alcohol alguna vez en la vida es de:", valor_max_alguna_vez, "% y ocurrió en el año(s):", años_max_alguna_vez, "\n")
+valor_min_alguna_vez <- min(prevalencia_alcohol$Alguna.vez.en.la.vida)
+años_min_alguna_vez <- prevalencia_alcohol$Año[prevalencia_alcohol$Alguna.vez.en.la.vida == valor_min_alguna_vez]
+cat("El porcentaje mínimo de adolescentes que han consumido alcohol alguna vez en la vida es de:", valor_min_alguna_vez, "% y ocurrió en el año(s):", años_min_alguna_vez, "\n")
+```
+
+  Ahora, estudiaremos el porcentaje máximo y mínimo de jóvenes que hayan tomado alcohol en los últimos 12 meses.
+```{r}
+valor_max_12_meses <- max(prevalencia_alcohol$Últimos.12.meses)
+años_max_12_meses <- prevalencia_alcohol$Año[prevalencia_alcohol$Últimos.12.meses == valor_max_12_meses]
+cat("El porcentaje máximo de adolescentes que han consumido alcohol en los últimos 12 meses es de:", valor_max_12_meses, "% y ocurrió en el año(s):", años_max_12_meses, "\n")
+valor_min_12_meses <- min(prevalencia_alcohol$Últimos.12.meses)
+años_min_12_meses <- prevalencia_alcohol$Año[prevalencia_alcohol$Últimos.12.meses == valor_min_12_meses]
+cat("El porcentaje mínimo de adolescentes que han consumido alcohol en los últimos 12 meses es de:", valor_min_12_meses, "y ocurrió en el año(s):", años_min_12_meses, "\n")
+```
+
+	Y por último, observamos el porcentaje máximo y mínimo de adolescentes que hayan consumido alcohol en los últimos 30 días. En este contexto, el consumo de alcohol en los últimos 30 días puede reflejar patrones más recientes, que van desde un uso ocasional hasta un hábito más regular o incluso problemático. Este tipo de consumo puede surgir como respuesta a eventos específicos, como fiestas, celebraciones o situaciones sociales, donde el alcohol se convierte en un elemento de diversión. Por otro lado, si el consumo se presenta de manera frecuente, podría estar relacionado con un patrón habitual o regular, que puede evolucionar hacia una dependencia. Esto sucede cuando el alcohol se utiliza como una forma de manejar el estrés, las emociones negativas o simplemente como parte de la rutina, lo que podría indicar una adicción en desarrollo si no se interviene a tiempo.
+```{r}
+valor_max_30_dias <- max(prevalencia_alcohol$Últimos.30.días)
+años_max_30_dias <- prevalencia_alcohol$Año[prevalencia_alcohol$Últimos.30.días == valor_max_30_dias]
+cat("El porcentaje máximo de adolescentes que han consumido alcohol en los últimos 30 días es de:", valor_max_30_dias, "% y ocurrió en el año(s):", años_max_30_dias, "\n")
+valor_min_30_dias <- min(prevalencia_alcohol$Últimos.30.días)
+años_min_30_dias <- prevalencia_alcohol$Año[prevalencia_alcohol$Últimos.30.días == valor_min_30_dias]
+cat("El porcentaje mínimo de adolescentes que han consumido alcohol en los últimos 30 días es de:", valor_min_30_dias, "% y ocurrió en el año(s):", años_min_30_dias, "\n")
+```
+
+	Por consiguiente, queremos estudiar la probabilidad de que menos de 10 estudiantes en una clase promedio de instituto, compuesta por 20 personas, hayan consumido alcohol alguna vez en su vida. Estamos interesados en estudiar la promoción 2014-2019, considerando los 5 o 6 años de permanencia en el instituto. Para esto, planteamos el uso de una distribución binomial, ya que cada estudiante tiene dos posibles resultados: haber consumido alcohol alguna vez o no haberlo hecho.
+```{r}
+media <- mean(prevalencia_alcohol$Alguna.vez.en.la.vida[12:14])
+result <- pbinom(9, 20, media/100)
+print(result)
+```
+
+	Si realizamos este cálculo, la probabilidad de que menos de 10 estudiantes hayan consumido alcohol da como resultado un porcentaje bastante bajo. Este resultado indica que es muy poco probable que en una clase de 20 estudiantes, menos de 10 personas hayan consumido alcohol. Esto suena preocupante ya que es un indicio de que el consumo de alcohol es bastante común entre los adolescentes.
+
+	El consumo de sustancias como el alcohol y el tabaco en los jóvenes está influenciado por su entorno social, especialmente por los comportamientos observados en los adultos cercanos. Estos datos están relacionados con el estudio anterior, ya que el entorno en el que viven los adolescentes es uno de los factores importantes a tener en cuenta, debido a que ellos tienden a imitar las conductas de adicción de los adultos. En este estudio, nos enfocamos no solo en los jóvenes, sino también en sus influencias familiares y sociales. Por ello, realizaremos una visualización sobre las diferencias entre hombres fumadores y mujeres fumadoras que hacen uso del tabaco de manera habitual. Para contrastar qué grupo tiene más tendencia o menos de consumir este tipo de sustancia, lo mediremos a través de sus edades con un gráfico de pirámide de población. Como vemos, la pirámide está dibujada con los hombres a la izquierda y las mujeres a la derecha.
+
+```{r}
+library(pyramid)
+```
+```{r, results='hide'}
+str(fumadores_diarios)
+```
+```{r}
+fumadores_diarios$Mujeres <- as.integer(gsub("\\.", "",fumadores_diarios$Mujeres))
+fumadores_diarios$Hombres <- as.integer(gsub("\\.", "",fumadores_diarios$Hombres))
+piramide <- data.frame(fumadores_diarios$Hombres, fumadores_diarios$Mujeres, fumadores_diarios$Parámetro)
+pyramid(piramide, Llab="Hombres", Rlab="Mujeres", Clab="Edad")
+```
+
+	Ahora, queremos estudiar a los fumadores por provincias, podemos utilizar un enfoque similar al anterior, pero centrándonos en las diferencias de región en lugar de en el género. Un gráfico de sectores (gráfico circular o de queso) es una opción excelente para visualizar las proporciones de fumadores en cada provincia, ya que permite observar de manera clara la distribución del consumo de tabaco entre las distintas áreas geográficas. 
+
+	Si observamos el diagrama de sectores, podemos concluir que en Barcelona, el consumo de tabaco es significativo. Esto supone un reto de salud pública, influenciado por factores sociales y culturales.
+
+```{r}
+library(ggplot2)
+ggplot(fumadores_por_provincias, aes(x = "", y = Fumadores, fill = Parámetro)) +
+  geom_bar(stat = "identity", width = 1, color = "black") +
+  coord_polar("y", start = 0) +
+  labs(title = "Fumadores por provincias") +
+  theme_void()
+```
+
+Para continuar con el estudio del tabaco, queremos evaluar si el número promedio de usuarios de tabaco a nivel mundial entre los años 2000 y 2020 ha cambiado significativamente. Para ello, se plantea la siguiente hipótesis:
+Hipótesis nula (H₀): El número promedio de usuarios de tabaco a nivel mundial entre 2000 y 2020 se ha mantenido constante, es decir, no hay un cambio significativo en el promedio anual.
+Hipótesis alternativa (H₁): El número promedio de usuarios de tabaco a nivel mundial entre 2000 y 2020 ha cambiado significativamente, indicando una variación en el promedio anual.
+Para verificar estas hipótesis, se analizarán datos históricos mediante una prueba paramétrica, como una prueba t para muestras dependientes (si se comparan datos por años consecutivos) o una regresión para evaluar la tendencia general.
+
+```{r, results='hide', warning=FALSE}
+datos <- data.frame(
+  Año = c(2000, 2005, 2010, 2015, 2020, 2025),
+  `15-24` = c(20.8, 18.7, 17.1, 15.6, 14.2, 13.0),
+  `25-34` = c(31.2, 28.4, 25.8, 23.5, 21.7, 19.7),
+  `35-44` = c(38.4, 34.7, 31.6, 28.9, 26.3, 24.3),
+  `45-54` = c(41.2, 37.3, 33.8, 31.0, 28.5, 26.1),
+  `55-64` = c(40.1, 35.7, 32.1, 29.3, 26.8, 24.8),
+  `65-74` = c(34.0, 30.7, 27.5, 24.7, 22.7, 20.9),
+  `75-84` = c(27.1, 24.2, 22.0, 19.9, 18.0, 16.4),
+  `85 o más` = c(18.9, 18.0, 15.7, 14.0, 12.7, 11.6)
+)
+str(datos)
+datos$Promedio <- rowMeans(datos[, 2:9], na.rm = TRUE)    
+modelo <- lm(Promedio ~ Año, data = datos)
+```
+```{r, warning=FALSE, message=FALSE}
+summary(modelo)
+
+library(ggplot2)
+ggplot(datos, aes(x = Año, y = Promedio)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(
+    title = "Tendencia del promedio de usuarios que consumen tabaco",
+    x = "Año",
+    y = "Promedio de usuarios"
+  ) +
+  theme_minimal()
+
+datos_2000 <- datos[datos$Año == 2000, 2:9]  
+datos_2020 <- datos[datos$Año == 2020, 2:9]  
+
+datos_2000 <- na.omit(datos_2000)
+datos_2020 <- na.omit(datos_2020)
+
+t_resultado <- t.test(as.numeric(datos_2000), as.numeric(datos_2020), paired = TRUE)
+print(t_resultado)
+```
+
+El valor p de 3.965e-05 es mucho menor que el umbral común de 0.05, lo que indica que el cambio en el promedio de usuarios de tabaco entre 2000 y 2020 es estadísticamente significativo con una dirección de disminución. 
+Con un valor p tan bajo, podemos rechazar la hipótesis nula (que decía que no ha habido cambios) y aceptar la hipótesis alternativa (que indica que ha habido un cambio significativo en el número de usuarios de tabaco entre 2000 y 2020). Esto puede ser debido han aumentado las campañas sobre los riesgos del tabaco y ayudas profesionales en cuanto a años anteriores.
+
+	Otro punto importante a tener en cuenta es representar los datos de fallecidos por el uso de sustancias psicoactivas en España, para ello utilizamos un gráfico de líneas con puntos de dispersión. Este gráfico es útil para visualizar la relación entre el año y el número de fallecidos, mostrando tanto los valores de cada año como la tendencia a lo largo del tiempo.
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+media_fallecidos <- mean(fallecidos$Número.de.fallecidos)
+max_fallecidos <- fallecidos$Año[which.max(fallecidos$Número.de.fallecidos)]
+min_fallecidos <- fallecidos$Año[which.min(fallecidos$Número.de.fallecidos)]
+ggplot(fallecidos, aes(x = Año, y = Número.de.fallecidos)) +
+  geom_point(size = 3, color = "Green") +                  
+  geom_line(color = "Green", linewidth = 1) +          
+  labs(
+    title = "Evolución de Fallecidos por Año",            
+    x = "Año",                                            
+    y = "Número de Fallecidos"                            
+  ) +
+  theme_minimal()
+```
+
+  Como conclusión a la gráfica representada, podemos analizar varios factores en relación a este crecimiento:
+
+ • Crisis económica de 2008: La gráfica muestra un aumento progresivo de los fallecimientos desde este año. Esto puede estar relacionado con el impacto de la crisis económica, que agravó problemas sociales como el desempleo, el estrés y el aumento del consumo de drogas en sectores vulnerables.
+ • Año 2020: Como consecuencia de la pandemia del COVID-19 y la generación de restricciones sociales y económicas, se intensificó los problemas de salud mental y consumo de drogas en gran cantidad, lo que podría haber contribuido al aumento de fallecimientos.
+
+	A continuación, para estudiar generalmente las muertes por drogas en países europeos, un diagrama de barras es una buena opción de visualización, ya que permite comparar de manera clara y directa las tasas de mortalidad por drogas entre diferentes países. Cada barra representará un país, y su altura reflejará el número de muertes por estas sustancias. Este tipo de gráfico es útil para observar las diferencias entre los distintos países que existen. Como vemos en el gráfico, Alemania y Reino Unido son los dos países con mas muertes por drogas que hay, esto es debido al gran consumo de estas sustancias y no solo a eso, también existen fallecimientos por la prevalencia de enfermedades como el VIH y la hepatitis C al hacer un uso compartido de jeringas o agujas contaminadas por estos virus.
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+ggplot(muertes_por_drogas, aes(x = Parámetro, y = Fallecidos, fill = Parámetro)) +
+  geom_bar(stat = "identity", color = "black") +        
+  labs(
+    title = "Evolución de Fallecidos por Drogas",       
+    x = "Países",                                    
+    y = "Número de Fallecidos"                          
+  ) +
+  theme_minimal() + theme(
+    axis.text.x = element_text(angle = 90, hjust = 1)
+  )
+```
+
+  En relación a la evolución de los fallecidos por drogas y haciendo uso del segundo y quinto dataframe, hemos extraído los datos de cada sustancia y estudiamos la media, la varianza y las frecuencias relativas de cada una de ellas. El análisis de las medias, desviaciones, y frecuencias relativas de las sustancias mencionadas (alcohol, tabaco, cannabis, hipnosedantes, cocaína, éxtasis y alógenos) es útil para evaluar las cantidades de consumo y cómo estos comportamientos pueden estar relacionados con la prevalencia de ciertos tipos de cánceres.
+
+```{r}
+media_prevalencia_alcohol_pre <- mean(prevalencia_consumo$Alcohol, na.rm = TRUE)
+desviacion_prevalencia_alcohol_pre <- sd(prevalencia_consumo$Alcohol, na.rm = TRUE)
+frec_absoluta_alcohol_pre <- table(prevalencia_consumo$Alcohol)
+frec_relativa_alcohol_pre <- prop.table(frec_absoluta_alcohol_pre)
+
+
+media_prevalencia_tabaco_pre <- mean(prevalencia_consumo$Tabaco, na.rm = TRUE)
+desviacion_prevalencia_tabaco_pre <- sd(prevalencia_consumo$Tabaco, na.rm = TRUE)
+frec_absoluta_tabaco_pre <- table(prevalencia_consumo$Tabaco)
+frec_relativa_tabaco_pre <- prop.table(frec_absoluta_tabaco_pre)
+
+
+media_prevalencia_cannabis_pre <- mean(prevalencia_consumo$Cannabis)
+desviacion_prevalencia_cannabis_pre <- sd(prevalencia_consumo$Cannabis)
+frec_absoluta_cannabis_pre <- table(prevalencia_consumo$Cannabis)
+frec_relativa_cannabis_pre <- prop.table(frec_absoluta_cannabis_pre)
+
+
+media_prevalencia_hipnosedantes_pre <- mean(prevalencia_consumo$Hipnosedantes.con.o.sin.receta, na.rm = TRUE)
+desviacion_prevalencia_hipnosedantes_pre <- sd(prevalencia_consumo$Hipnosedantes.con.o.sin.receta, na.rm = TRUE)
+frec_absoluta_hipnosedantes_pre <- table(prevalencia_consumo$Hipnosedantes.con.o.sin.receta)
+frec_relativa_hipnosedantes_pre <- prop.table(frec_absoluta_hipnosedantes_pre)
+
+
+media_prevalencia_cocaina_pre <- mean(prevalencia_consumo$Cocaína.polvo.y.o.base)
+desviacion_prevalencia_cocaina_pre <- sd(prevalencia_consumo$Cocaína.polvo.y.o.base)
+frec_absoluta_cocaina_pre <- table(prevalencia_consumo$Cocaína.polvo.y.o.base)
+frec_relativa_cocaina_pre <- prop.table(frec_absoluta_cocaina_pre)
+
+
+media_prevalencia_hipnosedantessin_pre <- mean(prevalencia_consumo$Hipnosedantes.sin.receta, na.rm = TRUE)
+desviacion_prevalencia_hipnosedantessin_pre <- sd(prevalencia_consumo$Hipnosedantes.sin.receta, na.rm = TRUE)
+frec_absoluta_hipnosedantessin_pre <- table(prevalencia_consumo$Hipnosedantes.sin.receta)
+frec_relativa_hipnosedantessin_pre <- prop.table(frec_absoluta_hipnosedantessin_pre)
+
+
+media_prevalencia_extasis <- mean(prevalencia_consumo$Éxtasis, na.rm = TRUE)
+desviacion_prevalencia_extasis <- sd(prevalencia_consumo$Éxtasis, na.rm = TRUE)
+frec_absoluta_extasis <- table(prevalencia_consumo$Éxtasis)
+frec_relativa_extasis <- prop.table(frec_absoluta_extasis)
+
+
+media_prevalencia_alucinogenos <- mean(prevalencia_consumo$Alucinógenos, na.rm = TRUE)
+desviacion_prevalencia_alucinogenos <- sd(prevalencia_consumo$Alucinógenos, na.rm = TRUE)
+frec_absoluta_alucinogenos <- table(prevalencia_consumo$Alucinógenos)
+frec_relativa_alucinogenos <- prop.table(frec_absoluta_alucinogenos)
+```
+
+  El consumo del cannabis, aunque en algunos casos se utiliza con fines medicinales, también puede estar relacionado con una serie de problemas de salud si su consumo es habitual. La contracción de enfermedades asociadas al uso de esta sustancia depende de la frecuencia y la forma en la que se consume. Las principales enfermedades o problemas relacionadas son la bronquitis crónica y las infecciones pulmonares.
+
+  Los hipnosedantes también son fármacos que se usan médicamente para tratar la ansiedad y el insomnio, principalmente. Sin embargo, su abuso puede causar síndrome de abstinencia, somnolencia excesiva y depresión, entre otros problemas.
+
+  La cocaína es un estimulante que afecta directamente al sistema nervioso central y tiene efectos devastadores en la salud como infarto de miocardio, ansiedad, dependencia severa y puede tener otras complicaciones como la pérdida del olfato.
+
+  Por consiguiente, el uso del éxtasis como droga tiene los siguientes riesgos también: deshidratación, hipertemia, ansiedad o pérdidas de memoria.
+  
+  Además, las drogas alucinógenas alteran la percepción y el estado mental. Aunque suelen ser menos adictivas que otras sustancias, tienen riesgos importantes también, como el aumento de la presión arterial, naúseas, ansiedad crónica o crisis de pánico.
+
+  Para añadir, partimos de los datos de la quinta tabla que contiene información sobre las sustancias consumidas, y su relación con el tipo de cáncer más común. El objetivo es identificar qué cánceres son los mas habituales, así como también el menos frecuente como consecuencia de la utilización del tabaco.
+
+```{r}
+valor_max <- max(consecuencias$"%")
+nombre_cancer_max <- consecuencias$Parámetro[consecuencias$"%" == valor_max]
+cat("El cáncer más común producido por el consumo del tabaco ha sido el de:", nombre_cancer_max, "con un porcentaje de:", valor_max, "% de personas afectadas, ocurrido en el año(s): 2012", "\n")
+valor_min <- min(consecuencias$"%")
+nombre_cancer_min <- consecuencias$Parámetro[consecuencias$"%" == valor_min]
+cat("El cáncer menos común producido por el consumo del tabaco ha sido el de:", nombre_cancer_min, "con un porcentaje de:", valor_min, "% de personas afectadas, ocurrido en el año(s): 2012", "\n")
+```
+
+  Podemos observar que el consumo del tabaco daña las células de la laringe, lo que aumenta el riesgo de desarrollar este cáncer. Es fundamental destacar que la combinación de fumar con el consumo excesivo de alcohol también incrementa significativamente este riesgo.
+  
+  Por otro lado, el cáncer de riñón es el menos común relacionado con el consumo de tabaco en 2012. Aunque el tabaco se asocia más frecuentemente con cánceres como los de pulmón, boca, esófago y laringe, también está vinculado con un riesgo de desarrollar cáncer de riñón, aunque como vemos, en menor proporción.
+
+5. Conclusión.
+
+  En conclusión, el consumo temprano de sustancias como el alcohol, el tabaco y las drogas ilegales en los jóvenes representa una amenaza significativa para su salud física, emocional y social, con efectos a largo plazo que pueden afectar su desarrollo y futuro. Este estudio ha explorado la prevalencia y las tendencias del consumo en España y en países europeos, destacando que los factores demográficos y temporales influyen en los patrones de consumo. El análisis ha mostrado que ek uso de estas sustancias, especialmente el alcohol y el tabaco, es común entre los adolescentes, lo que resalta la necesidad de abordar este problema a través de la educación y la prevención, así como la importancia de crear conciencia sobre los riesgos a los que se enfrentan.
+
+  Además, el estudio ha permitido identificar y evaluar las consecuencias del consumo de sustancias en términos de salud pública, desde el impacto en el rendimiento académico hasta las muertes asociadas con el abuso de drogas. Se ha observado una relación directa entre el consumo de estas sustancias y el aumento de enfermedades graves, como varios tipos de cáncer. Los datos sobre las muertes por sobredosis y enfermedades relacionadas refuerzan la urgencia de implementar programas educativos que informen a los jóvenes sobre los peligros de estas conductas. A medida que el consumo de sustancias sigue siendo un desafío importante, es crucial adoptar medidas para reducir su prevalencia y reducir sus efectos en la sociedad.
+
